@@ -1,121 +1,257 @@
 import java.util.Scanner;
 
-public class TicTacToe {
-    public static Scanner input = new Scanner(System.in);
-    public static char[][] board = new char[3][3];
+/**
+ * CSC-151 Scratch-Off Simulator
+ *
+ * A complete lottery scratch-off ticket simulator supporting three ticket types:
+ * Lucky Sevens, Match Pairs, and Lucky Sevens Multiplier.
+ */
+public class ScratchOff {
 
+    // State variables
+    private static int balance;
+    private static int totalSpent;
+    private static int totalWinnings;
+    private static Scanner scanner;
+
+    /**
+     *
+     */
     public static void main(String[] args) {
-        initializeBoard();
-        char currentPlayer = 'X';
-        boolean gameOver = false;
+        initializeGame();
+        runGame();
+        //printGameSummary();
+        //askPlayAgain();
+        //getValidYesNo();
+    }
 
-        // Main game loop
-        while (!gameOver) {
-            printBoard();
+    /**
+     * Sets up starting game values
+     */
+    public static void initializeGame() {
+        balance = 50;
+        totalSpent = 0;
+        totalWinnings = 0;
+        scanner  = new Scanner(System.in);
+        System.out.println("Welcome to the CSC-151 Scratch-Off Simulator!");
+        System.out.println("Starting balance: $" + balance);
+    }
 
-            // Get player move
-            System.out.println("Player " + currentPlayer + ", enter row (0-2): ");
-            int row = input.nextInt();
-            System.out.println("Player " + currentPlayer + ", enter column (0-2): ");
-            int col = input.nextInt();
-
-            // REVIEW 1: The program places the mark and checks if it’s valid.
-            boolean validMove = placeMark(row, col, currentPlayer);
-            if (!validMove) {
-                System.out.println("Invalid move, try again.");
-                continue; // skip rest of loop and ask again
-            }
-
-            // REVIEW 2: The program checks if the current player has won.
-            if (checkWin(currentPlayer)) {
-                printBoard();
-                System.out.println("Player " + currentPlayer + " wins!");
-                gameOver = true;
-            }
-            // REVIEW 3: The program checks if the board is full, meaning a draw.
-            else if (isBoardFull()) {
-                printBoard();
-                System.out.println("It's a draw!");
-                gameOver = true;
-            }
-            // REVIEW 4: The program switches to the other player for the next turn.
-            else {
-                currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-            }
+    /**
+     *
+     */
+    public static void runGame() {
+        String UserChoice;
+        System.out.println("\nCurrent balance: $" + balance);
+        System.out.print("Do you want to buy a ticket (y/n): ");
+        boolean yesNo = getValidYesNo();
+        System.out.println(yesNo);
+        UserChoice = scanner.nextLine();
+        if(getValidYesNo() == true){
+            System.out.print("Choose Ticket " + canAffordTicket(balance) + ": ");
+        } else {
+            return;
         }
     }
 
-    // Initializes the board with spaces
-    public static void initializeBoard() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                board[i][j] = ' ';
-            }
-        }
+    /**
+     *
+     */
+    public static void playRound() {
+        System.out.println("");
     }
 
-    // Prints the board with grid lines
-    public static void printBoard() {
-        System.out.println("-------------");
-        for (int i = 0; i < 3; i++) {
-            System.out.print("| ");
-            for (int j = 0; j < 3; j++) {
-                System.out.print(board[i][j] + " | ");
-            }
-            System.out.println();
-            System.out.println("-------------");
-        }
+    /**
+     *
+     */
+    public static void printGameSummary() {
+
     }
 
-    // TODO 5: Complete this method
-    // Purpose: Place the player's mark on the board if the space is empty.
-    // Return true if successful, or false if the move is invalid.
-    public static boolean placeMark(int row, int col, char mark) {
-        // makes sure input says within bounds
-        if (row > 2 || col > 2 || row < 0 || col < 0) return false;
-        // checks if inputted submition is replacing new submition
-        if (board[row][col] != 'X' && board[row][col] != 'O') {
-            board[row][col] = mark;
+    /**
+     *
+     */
+    public static boolean askPlayAgain() {
+        System.out.print("Would you like to play again: " + getValidYesNo());
+        //getValidYesNo();
+        return false;
+    }
+
+    /**
+     * Checks if the player's current balance is sufficient to afford a ticket.
+     *
+     */
+    public static boolean canAffordTicket(int ticketCost) {
+        if (ticketCost >= 8){
+            System.out.print("(a) Lucky Sevens, (b) Match Pairs, (c) Multiplier");
+        } else if (ticketCost >= 3) {
+            System.out.print("(a) Lucky Sevens, (b) Match Pairs, (c) Multiplier");
+        } else if (ticketCost >= 2){
+            System.out.print("(a) Lucky Sevens, (b) Match Pairs, (c) Multiplier");
+        } else {
+            System.out.print("Sorry You can't afford this ticket");
+        }
+        return false;
+    }
+
+    /**
+     *
+     */
+    public static boolean getValidYesNo() {
+        Scanner input = new Scanner(System.in);
+        String yesOrNo;
+
+        yesOrNo = input.nextLine();
+        System.out.println(yesOrNo);
+
+        while(!yesOrNo.toLowerCase().equals("y") || !yesOrNo.toLowerCase().equals("n")){
+            yesOrNo = input.next();
+        }
+
+        if (yesOrNo.toLowerCase().equals("y")){
+            System.out.print("Do you want to buy a ticket: y");
             return true;
-        } else{
+        } else if (yesOrNo.toLowerCase().equals("n")) {
+            System.out.print("Do you want to buy a ticket: n");
             return false;
-        }
-    }
-
-    // TODO 6: Complete this method
-    // Purpose: Return true if the given player has three in a row.
-    // Check all rows, columns, and both diagonals.
-    public static boolean checkWin(char mark) {
-        for (char[] chars : board) {
-            //checks row wins
-            if (chars[0] == mark && chars[1] == mark && chars[2] == mark) {
-                return true;
-            }
-        }
-        //checks column wins
-        for (int col = 0; col < board.length; col++) {
-            if (board[0][col] == mark && board[1][col] == mark && board[2][col] == mark) {
-                return true;
-            }
-        }
-        //checks 1 diagonal
-        if (board[0][0] == mark && board[1][1] == mark && board[2][2] == mark){
-            return true;
-        }
-        //checks only other diagonal
-        else return board[1][0] == mark && board[1][1] == mark && board[0][2] == mark;
-    }
-
-    // TODO 7: Complete this method
-    // Purpose: Return true if the board is full (no spaces left).
-    public static boolean isBoardFull() {
-        for (int rowchars = 0; rowchars < board.length; rowchars++) {
-            for (int col = 0; col < board.length; col++) {
-                if (board[rowchars][col] == ' ') {
-                    return false;
-                }
-            }
         }
         return true;
     }
+
+    /**
+     *
+     */
+    public static int getValidInt(int min, int max) {
+        return 0;
+    }
+
+    /**
+     * Generates a 3×3 grid (stored as int[9]) for Lucky Sevens.
+     * Each value is a random integer from 1 to 9.
+     *
+     */
+    public static int[] generateLuckySevensGrid() {
+        return new int[9];
+    }
+
+    /**
+     * Generates a grid of 8 random integers (1–15) for Match Pairs.
+     *
+     */
+    public static int[] generateMatchPairsGrid() {
+        return new int[8];
+    }
+
+    /**
+     * Returns a weighted random multiplier according to the prize rules:
+     * 50% chance of 2x, 30% chance of 3x, 20% chance of 4x.
+     *
+     * Weighted probability means some outcomes are more likely than others.
+     * You need to map ranges of random values to each multiplier:
+     *
+     * - 2x should occur 50% of the time (0.0 to 0.5)
+     * - 3x should occur 30% of the time (0.5 to 0.8)
+     * - 4x should occur 20% of the time (0.8 to 1.0)
+     *
+     */
+    public static int getWeightedMultiplier() {
+        return 0;
+    }
+
+    /**
+     * Evaluates a Lucky Sevens ticket grid and returns the prize amount.
+     *
+     * Prize rules (evaluated in order):
+     * 1. All 9 are 7 → $500
+     * 2. Any row/column/diagonal has exactly three 7s → $100
+     * 3. Exactly three 7s anywhere → $20
+     * 4. Exactly two 7s anywhere → $5
+     * 5. Otherwise → $0
+     *
+     */
+    public static int evaluateLuckySevens(int[] grid) {
+        return 0;
+    }
+
+    /**
+     * Evaluates a Match Pairs ticket grid and returns the prize amount.
+     *
+     * Prize rules (evaluated in order):
+     * 1. Exactly four distinct pairs → $300
+     * 2. Exactly three distinct pairs → $75
+     * 3. Exactly two distinct pairs → $25
+     * 4. Otherwise → $0
+     *
+     * A pair is defined as a value that appears exactly twice in the grid.
+     *
+     */
+    public static int evaluateMatchPairs(int[] grid) {
+        return 0;
+    }
+
+    /**
+     * Applies a multiplier to a base prize amount.
+     * Multiplier only applies if the base prize is >= $5.
+     * If the base prize is < $5, returns the base prize unchanged.
+     *
+     */
+    public static int applyMultiplier(int basePrize, int multiplier) {
+        return 0;
+    }
+
+    /**
+     * Counts the number of sevens (7s) in a grid.
+     *
+     */
+    public static int countSevens(int[] grid) {
+        return 0;
+    }
+
+    /**
+     * Counts how many times a specific value appears in a grid.
+     *
+     */
+    public static int countFrequencies(int[] grid, int value) {
+        return 0;
+    }
+
+    /**
+     * Displays a grid in the correct output format.
+     * For Lucky Sevens and Lucky Sevens Multiplier (3×3 grid):
+     * displays as 9 space-separated integers.
+     *
+     * For Match Pairs (8-element grid):
+     * displays as 8 space-separated integers.
+     *
+     */
+    public static void displayGrid(int[] grid, String ticketType) {
+
+    }
+
+    /**
+     * Deducts the ticket cost from the player's balance.
+     * Updates totalSpent accordingly.
+     *
+     */
+    public static void updateBalanceForPurchase(int amount) {
+
+    }
+
+    /**
+     * Adds the prize winnings to the player's balance.
+     * Updates totalWinnings accordingly.
+     *
+     */
+    public static void updateBalanceForPrize(int amount) {
+
+    }
+
+    /**
+     * Tracks the total amount spent and won across all rounds.
+     *
+     */
+    public static void trackTotals(int spent, int winnings) {
+
+    }
+
 }
